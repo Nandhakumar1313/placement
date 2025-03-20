@@ -1,35 +1,58 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid"; 
 import JobArray from "../components/JobArray";
 
-const AddJobPage = () => {
+const AddJob = () => {
   const { jobs, setJobs } = JobArray();
+  const [companyName, setCompanyName] = useState("");
+  const [category, setCategory] = useState("");
+  const [domain, setDomain] = useState("");
+  const [postedDate, setPostedDate] = useState(""); 
   const navigate = useNavigate();
-  const [newJob, setNewJob] = useState({ companyName: "", category: "", JDdate: "", domain: "" });
 
-  const handleChange = (e) => {
-    setNewJob({ ...newJob, [e.target.name]: e.target.value });
-  };
+  const handleAddJob = () => {
+    const newJob = {
+      id: uuidv4(), // Generate a unique ID
+      companyName,
+      category,
+      domain,
+      postedDate, 
+    };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const updatedJobs = [...jobs, { id: Date.now(), ...newJob }];
+    console.log("New Job Data:", newJob); 
+
+    const updatedJobs = [...jobs, newJob];
     setJobs(updatedJobs);
+    localStorage.setItem("jobs", JSON.stringify(updatedJobs));
     navigate("/");
   };
 
   return (
-    <div className="container">
+    <div className="form-container">
       <h2>Add Job</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="companyName" placeholder="Company Name" onChange={handleChange} required />
-        <input type="text" name="category" placeholder="Category" onChange={handleChange} required />
-        <input type="date" name="JDdate" onChange={handleChange} required />
-        <input type="text" name="domain" placeholder="Domain" onChange={handleChange} required />
-        <button type="submit">Add Job</button>
-      </form>
+      <input 
+        type="text" 
+        placeholder="Company Name" 
+        onChange={(e) => setCompanyName(e.target.value)} 
+      />
+      <input 
+        type="text" 
+        placeholder="Category" 
+        onChange={(e) => setCategory(e.target.value)} 
+      />
+      <input 
+        type="text" 
+        placeholder="Domain" 
+        onChange={(e) => setDomain(e.target.value)} 
+      />
+      <input 
+        type="date" 
+        onChange={(e) => setPostedDate(e.target.value)} 
+      /> 
+      <button onClick={handleAddJob}>Add Job</button>
     </div>
   );
 };
 
-export default AddJobPage;
+export default AddJob;

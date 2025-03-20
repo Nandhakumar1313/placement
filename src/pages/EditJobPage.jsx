@@ -9,7 +9,7 @@ const EditJobPage = () => {
   const [jobData, setJobData] = useState({ companyName: "", category: "", JDdate: "", domain: "" });
 
   useEffect(() => {
-    const job = jobs.find(job => job.id === parseInt(id));
+    const job = jobs.find(job => job.id === id); // No need for parseInt
     if (job) setJobData(job);
   }, [id, jobs]);
 
@@ -19,18 +19,19 @@ const EditJobPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const updatedJobs = jobs.map(job => job.id === parseInt(id) ? jobData : job);
+    const updatedJobs = jobs.map(job => (job.id === id ? { ...job, ...jobData } : job));
     setJobs(updatedJobs);
+    localStorage.setItem("jobs", JSON.stringify(updatedJobs)); // Store updated jobs
     navigate("/");
   };
 
   return (
-    <div className="container">
+    <div className="form-container">
       <h2>Edit Job</h2>
       <form onSubmit={handleSubmit}>
         <input type="text" name="companyName" value={jobData.companyName} onChange={handleChange} required />
         <input type="text" name="category" value={jobData.category} onChange={handleChange} required />
-        <input type="date" name="JDdate" value={jobData.JDdate} onChange={handleChange} required />
+        <input type="date" name="JDdate" value={jobData.JDdate || ""} onChange={handleChange} required />
         <input type="text" name="domain" value={jobData.domain} onChange={handleChange} required />
         <button type="submit">Update Job</button>
       </form>
